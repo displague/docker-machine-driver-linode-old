@@ -178,6 +178,21 @@ func (d *Driver) Create() error {
 	}
 
 	client := d.getClient()
+	var askedPlan linodego.LinodePlan
+	linodePlansResponse, err := client.Avail.LinodePlans()
+	if err != nil {
+		return err
+	}
+	for _, plan := range linodePlansResponse.LinodePlans {
+		if plan.PlanId == d.PlanId {
+			askedPlan = plan
+			break
+		}
+	}
+	if askedPlan.PlanId == 0 {
+		log.Debug("Cannot find the Linode plan")
+		return nil
+	}
 
 	// Create a linode
 	log.Debug("Creating linode instance")
@@ -226,7 +241,8 @@ func (d *Driver) Create() error {
 	distributionId := d.DistributionId
 
 	log.Debug("Create disk")
-	createDiskJobResponse, err := d.client.Disk.CreateFromDistribution(distributionId, d.LinodeId, "Primary Disk", 24576-256, args)
+	diskSize := askedPlan.Disk * 1024
+	createDiskJobResponse, err := d.client.Disk.CreateFromDistribution(distributionId, d.LinodeId, "Primary Disk", diskSize-256, args)
 
 	if err != nil {
 		return err
