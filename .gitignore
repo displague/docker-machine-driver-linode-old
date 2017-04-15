@@ -24,4 +24,4 @@ _testmain.go
 *.prof
 
 # Bin
-docker-machine-driver-linode
+# docker-machine-driver-linode
