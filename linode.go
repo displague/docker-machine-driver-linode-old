@@ -24,8 +24,7 @@ type Driver struct {
 	IPAddress  string
 	DockerPort int
 
-	LinodeId    int
-	LinodeLabel string
+	LinodeId int
 
 	DataCenterId   int
 	PlanId         int
@@ -83,11 +82,6 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			EnvVar: "LINODE_ROOT_PASSWORD",
 			Name:   "linode-root-pass",
 			Usage:  "Root password",
-		},
-		mcnflag.StringFlag{
-			EnvVar: "LINODE_LABEL",
-			Name:   "linode-label",
-			Usage:  "Linode label",
 		},
 		mcnflag.IntFlag{
 			EnvVar: "LINODE_DATACENTER_ID",
@@ -151,7 +145,6 @@ func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) error {
 	d.SSHPort = flags.Int("linode-ssh-port")
 	d.DistributionId = flags.Int("linode-distribution-id")
 	d.KernelId = flags.Int("linode-kernel-id")
-	d.LinodeLabel = flags.String("linode-label")
 	d.DockerPort = flags.Int("linode-docker-port")
 
 	if d.APIKey == "" {
@@ -193,12 +186,10 @@ func (d *Driver) Create() error {
 	d.LinodeId = linodeResponse.LinodeId.LinodeId
 	log.Debugf("Linode created: %d", d.LinodeId)
 
-	if d.LinodeLabel != "" {
-		log.Debugf("Updating linode label to %s", d.LinodeLabel)
-		_, err := client.Linode.Update(d.LinodeId, map[string]interface{}{"Label": d.LinodeLabel})
-		if err != nil {
-			return err
-		}
+	log.Debugf("Updating linode label to %s", d.MachineName)
+	_, err = client.Linode.Update(d.LinodeId, map[string]interface{}{"Label": d.MachineName})
+	if err != nil {
+		return err
 	}
 
 	linodeIPListResponse, err := client.Ip.List(d.LinodeId, -1)
@@ -267,7 +258,8 @@ func (d *Driver) Create() error {
 	args2["RootDeviceRO"] = "true"
 	args2["helper_distro"] = "true"
 	kernelId := d.KernelId
-	_, err = d.client.Config.Create(d.LinodeId, kernelId, "My Docker Machine Configuration", args2)
+	configName := fmt.Sprintf("%s Machine Config", d.MachineName)
+	_, err = d.client.Config.Create(d.LinodeId, kernelId, configName, args2)
 
 	if err != nil {
 		return err
