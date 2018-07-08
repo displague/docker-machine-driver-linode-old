@@ -1,5 +1,10 @@
 # docker-machine-linode
 
+[![Build Status](https://travis-ci.org/displague/docker-machine-linode.svg?branch=master)](https://travis-ci.org/displague/docker-machine-linode)
+[![GoDoc](https://godoc.org/github.com/displague/docker-machine-linode?status.svg)](https://godoc.org/github.com/displague/docker-machine-linode)
+[![Go Report Card](https://goreportcard.com/badge/github.com/displague/docker-machine-linode)](https://goreportcard.com/report/github.com/displague/docker-machine-linode)
+[![codecov](https://codecov.io/gh/displague/docker-machine-linode/branch/master/graph/badge.svg)](https://codecov.io/gh/displague/docker-machine-linode)
+
 Linode Driver Plugin for docker-machine.
 
 ## Install

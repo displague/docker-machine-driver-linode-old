@@ -1,5 +1,8 @@
 default: build
 
+test:
+	go test
+
 clean:
 	$(RM) ./bin/docker-machine-driver-linode
 	$(RM) $(GOPATH)/bin/docker-machine-driver-linode
