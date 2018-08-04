@@ -25,4 +25,4 @@ _testmain.go
 
 vendor
 # Bin
-docker-machine-driver-linode
+# docker-machine-driver-linode
